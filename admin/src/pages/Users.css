@@ -1,0 +1,74 @@
+.users-page {
+  padding: 20px;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.page-header p {
+  margin: 5px 0 0;
+  color: #666;
+}
+
+.placeholder-content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  text-align: center;
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.placeholder-icon {
+  width: 80px;
+  height: 80px;
+  background-color: #E3F2FD;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.placeholder-icon i {
+  font-size: 40px;
+  color: #2196F3;
+}
+
+.placeholder-content h2 {
+  margin: 0 0 15px;
+  color: #333;
+  font-size: 20px;
+}
+
+.placeholder-content p {
+  margin: 0 0 20px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.placeholder-content ul {
+  text-align: left;
+  margin: 0 auto 20px;
+  max-width: 400px;
+  padding-left: 20px;
+}
+
+.placeholder-content li {
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.placeholder-note {
+  font-style: italic;
+  color: #999;
+  font-size: 14px;
+}
