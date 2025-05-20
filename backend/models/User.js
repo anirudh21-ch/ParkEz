@@ -32,6 +32,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add a phone number'],
     },
+    registration_number: {
+      type: String,
+      unique: true,
+      sparse: true, // This allows multiple null values
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },

@@ -22,6 +22,11 @@ exports.register = async (req, res) => {
 
     console.log(`Creating new user with email: ${email}, role: ${role}`);
 
+    // Generate a unique registration number
+    const registrationNumber = role === 'user' ? `USER-${Date.now()}` :
+                              role === 'operator' ? `OPR-${Date.now()}` :
+                              `ADM-${Date.now()}`;
+
     // Create user with explicit database specification
     const user = await User.create({
       name,
@@ -29,6 +34,7 @@ exports.register = async (req, res) => {
       password,
       role: role || 'user', // Default to 'user' if role is not provided
       phone,
+      registration_number: registrationNumber,
     });
 
     console.log(`User created successfully with ID: ${user._id}`);
