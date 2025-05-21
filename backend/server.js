@@ -144,5 +144,5 @@ const PORT = 5002; // Changed from 5000 to avoid conflicts with Control Center
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Server accessible at http://localhost:${PORT}`);
-  console.log(`For mobile devices, use your computer's IP address: http://192.168.31.244:${PORT}`);
+  console.log(`For mobile devices, use your computer's IP address: http://192.168.1.6:${PORT}`);
 });
