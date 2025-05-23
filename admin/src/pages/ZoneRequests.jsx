@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { zonesAPI } from '../api/api';
 import './ZoneRequests.css';
 
 const ZoneRequests = () => {
+  const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -18,16 +20,34 @@ const ZoneRequests = () => {
     try {
       // Try to fetch real data from API
       try {
-        const response = await zonesAPI.getZones();
-        if (response.data && response.data.length > 0) {
-          setRequests(response.data);
+        // Use the getPendingZones endpoint to get only pending requests
+        const response = await zonesAPI.getPendingZones();
+        if (response.data && response.data.data && response.data.data.length > 0) {
+          setRequests(response.data.data);
         } else {
-          setRequests([]);
+          // If no pending zones, try to get zones with pending status
+          const pendingResponse = await zonesAPI.getZonesByStatus('pending');
+          if (pendingResponse.data && pendingResponse.data.data && pendingResponse.data.data.length > 0) {
+            setRequests(pendingResponse.data.data);
+          } else {
+            setRequests([]);
+          }
         }
       } catch (apiError) {
         console.error('API Error:', apiError);
-        // If API fails, set empty data
-        setRequests([]);
+        // If API fails, try fallback to get all zones and filter pending ones
+        try {
+          const allZonesResponse = await zonesAPI.getZones();
+          if (allZonesResponse.data && allZonesResponse.data.data) {
+            const pendingZones = allZonesResponse.data.data.filter(zone => zone.status === 'pending');
+            setRequests(pendingZones);
+          } else {
+            setRequests([]);
+          }
+        } catch (fallbackError) {
+          console.error('Fallback API Error:', fallbackError);
+          setRequests([]);
+        }
       }
 
       setError(null);
@@ -100,6 +120,10 @@ const ZoneRequests = () => {
     setModalOpen(true);
   };
 
+  const viewZoneDetails = (zoneId) => {
+    navigate(`/zone-details/${zoneId}`);
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
@@ -154,14 +178,22 @@ const ZoneRequests = () => {
                     </td>
                     <td>{formatDate(request.createdAt)}</td>
                     <td>
-                      {request.status === 'pending' && (
+                      <div className="action-buttons">
                         <button
                           className="view-button"
-                          onClick={() => openModal(request)}
+                          onClick={() => viewZoneDetails(request._id)}
                         >
                           View Details
                         </button>
-                      )}
+                        {request.status === 'pending' && (
+                          <button
+                            className="modal-button"
+                            onClick={() => openModal(request)}
+                          >
+                            Quick Actions
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))

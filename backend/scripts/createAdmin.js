@@ -56,7 +56,8 @@ const createAdmin = async () => {
       email: 'admin@parkez.com',
       password: hashedPassword,
       role: 'admin',
-      phone: '1234567890'
+      phone: '1234567890',
+      registration_number: 'ADMIN-001' // Add a unique registration number
     });
 
     console.log('Admin user created successfully');

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use the correct port for the backend server
-const API_URL = 'http://192.168.1.6:5002/api';
+const API_URL = 'http://192.168.29.5:5002/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -55,9 +55,12 @@ export const usersAPI = {
 // Zones API
 export const zonesAPI = {
   getZones: () => api.get('/zones'),
+  getZonesByStatus: (status) => api.get(`/zones?status=${status}`),
   getZoneCount: () => api.get('/zones/count'),
   getPendingZones: () => api.get('/zones/pending'),
   getPendingZoneCount: () => api.get('/zones/pending/count'),
+  getZoneStats: (zoneId) => api.get(`/zones/${zoneId}/stats`),
+  getZoneById: (zoneId) => api.get(`/zones/${zoneId}`),
   approveZone: (zoneId) => api.put(`/zones/${zoneId}/approve`),
   rejectZone: (zoneId) => api.put(`/zones/${zoneId}/reject`)
 };

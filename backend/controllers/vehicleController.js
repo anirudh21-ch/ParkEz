@@ -89,9 +89,20 @@ exports.createVehicle = async (req, res) => {
     // Add user to req.body
     req.body.user = req.user.id;
 
-    // Check if vehicle number already exists
+    // Ensure vehicleNumber is set
+    if (!req.body.vehicleNumber) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vehicle number is required',
+      });
+    }
+
+    // Check if vehicle number already exists (check both fields for compatibility)
     const existingVehicle = await Vehicle.findOne({
-      vehicleNumber: req.body.vehicleNumber,
+      $or: [
+        { vehicleNumber: req.body.vehicleNumber },
+        { licensePlate: req.body.vehicleNumber }
+      ]
     });
 
     if (existingVehicle) {
@@ -101,6 +112,9 @@ exports.createVehicle = async (req, res) => {
       });
     }
 
+    // Set both fields for compatibility
+    req.body.licensePlate = req.body.vehicleNumber;
+
     const vehicle = await Vehicle.create(req.body);
 
     res.status(201).json({
@@ -108,6 +122,7 @@ exports.createVehicle = async (req, res) => {
       data: vehicle,
     });
   } catch (error) {
+    console.error('Error creating vehicle:', error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -195,8 +210,12 @@ exports.deleteVehicle = async (req, res) => {
 // @access  Private/Operator
 exports.getVehicleByNumber = async (req, res) => {
   try {
+    // Check both fields for compatibility
     const vehicle = await Vehicle.findOne({
-      vehicleNumber: req.params.vehicleNumber,
+      $or: [
+        { vehicleNumber: req.params.vehicleNumber },
+        { licensePlate: req.params.vehicleNumber }
+      ]
     }).populate('user', 'name email phone');
 
     if (!vehicle) {
@@ -211,6 +230,7 @@ exports.getVehicleByNumber = async (req, res) => {
       data: vehicle,
     });
   } catch (error) {
+    console.error('Error finding vehicle by number:', error);
     res.status(500).json({
       success: false,
       message: error.message,

@@ -1,0 +1,17 @@
+2025-05-23 10:45:37,836 - ocr_adapter - INFO - Connecting to MongoDB: mongodb+srv://parkez:parkez@cluster0.oejvcid.mongodb.net/parkez?retryWrites=true&w=majority
+2025-05-23 10:45:37,836 - ocr_adapter - INFO - Database: parkez
+2025-05-23 10:45:38,195 - ocr_adapter - ERROR - Error connecting to MongoDB: bad auth : Authentication failed., full error: {'ok': 0, 'errmsg': 'bad auth : Authentication failed.', 'code': 8000, 'codeName': 'AtlasError'}
+2025-05-23 10:45:38,195 - ocr_adapter - WARNING - Falling back to sample data
+2025-05-23 10:45:38,198 - ocr_adapter - INFO - Starting OCR Adapter service on port 5005
+2025-05-23 10:45:38,198 - ocr_adapter - INFO - Forwarding requests to YOLO OCR API at http://192.168.29.5:5001
+2025-05-23 10:45:38,199 - ocr_adapter - INFO - Server running at http://192.168.29.5:5005/
+2025-05-23 10:45:38,199 - ocr_adapter - INFO - For local access: http://localhost:5005/
+2025-05-23 10:45:38,199 - ocr_adapter - INFO - For network access: http://192.168.29.5:5005/
+ * Serving Flask app 'ocr_adapter' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+2025-05-23 10:45:38,205 - werkzeug - WARNING -  * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+2025-05-23 10:45:38,206 - werkzeug - INFO -  * Running on http://192.168.31.33:5005/ (Press CTRL+C to quit)

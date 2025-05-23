@@ -11,6 +11,11 @@ exports.getZones = async (req, res) => {
       query.status = 'approved';
     }
 
+    // Check for status query parameter
+    if (req.query.status && ['pending', 'approved', 'rejected'].includes(req.query.status)) {
+      query.status = req.query.status;
+    }
+
     const zones = await Zone.find(query).populate('operator', 'name email phone');
 
     res.status(200).json({
@@ -20,6 +25,67 @@ exports.getZones = async (req, res) => {
     });
   } catch (error) {
     console.error('Error in getZones:', error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Get pending zone requests
+// @route   GET /api/zones/pending
+// @access  Private/Admin
+exports.getPendingZones = async (req, res) => {
+  try {
+    const zones = await Zone.find({ status: 'pending' }).populate('operator', 'name email phone');
+
+    res.status(200).json({
+      success: true,
+      count: zones.length,
+      data: zones,
+    });
+  } catch (error) {
+    console.error('Error in getPendingZones:', error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Get zone count
+// @route   GET /api/zones/count
+// @access  Private/Admin
+exports.getZoneCount = async (req, res) => {
+  try {
+    const count = await Zone.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      data: count,
+    });
+  } catch (error) {
+    console.error('Error in getZoneCount:', error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Get pending zone count
+// @route   GET /api/zones/pending/count
+// @access  Private/Admin
+exports.getPendingZoneCount = async (req, res) => {
+  try {
+    const count = await Zone.countDocuments({ status: 'pending' });
+
+    res.status(200).json({
+      success: true,
+      data: count,
+    });
+  } catch (error) {
+    console.error('Error in getPendingZoneCount:', error.message);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -263,7 +329,7 @@ exports.updateZoneStatus = async (req, res) => {
         new: true,
         runValidators: true,
       }
-    );
+    ).populate('operator', 'name email phone');
 
     if (!zone) {
       return res.status(404).json({
@@ -277,6 +343,92 @@ exports.updateZoneStatus = async (req, res) => {
       data: zone,
     });
   } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Get zone statistics
+// @route   GET /api/zones/:id/stats
+// @access  Private/Admin or Operator
+exports.getZoneStats = async (req, res) => {
+  try {
+    const zone = await Zone.findById(req.params.id);
+
+    if (!zone) {
+      return res.status(404).json({
+        success: false,
+        message: `Zone not found with id of ${req.params.id}`,
+      });
+    }
+
+    // Check if user is authorized to access zone stats
+    if (zone.operator.toString() !== req.user.id && req.user.role !== 'admin') {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized to access stats for this zone',
+      });
+    }
+
+    // Get tickets for this zone
+    const Ticket = require('../models/Ticket');
+
+    // Get active tickets count
+    const activeTicketsCount = await Ticket.countDocuments({
+      zone: req.params.id,
+      status: 'active',
+    });
+
+    // Get total tickets count
+    const totalTicketsCount = await Ticket.countDocuments({
+      zone: req.params.id,
+    });
+
+    // Get completed tickets count
+    const completedTicketsCount = await Ticket.countDocuments({
+      zone: req.params.id,
+      status: 'completed',
+    });
+
+    // Get total revenue
+    const tickets = await Ticket.find({
+      zone: req.params.id,
+      status: 'completed',
+    });
+
+    const totalRevenue = tickets.reduce((total, ticket) => {
+      return total + (ticket.amount || 0);
+    }, 0);
+
+    // Get recent tickets
+    const recentTickets = await Ticket.find({
+      zone: req.params.id,
+    })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate('user', 'name email')
+      .populate('vehicle', 'vehicleNumber vehicleType');
+
+    res.status(200).json({
+      success: true,
+      data: {
+        zone,
+        stats: {
+          activeTickets: activeTicketsCount,
+          totalTickets: totalTicketsCount,
+          completedTickets: completedTicketsCount,
+          availableSlots: zone.availableSlots,
+          totalSlots: zone.totalSlots,
+          occupancyRate: ((zone.totalSlots - zone.availableSlots) / zone.totalSlots) * 100,
+          totalRevenue: totalRevenue.toFixed(2),
+        },
+        recentTickets,
+      },
+    });
+  } catch (error) {
+    console.error('Error in getZoneStats:', error.message);
     res.status(500).json({
       success: false,
       message: error.message,

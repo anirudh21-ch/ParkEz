@@ -20,7 +20,25 @@ const Login = ({ onLogin }) => {
     setError('');
 
     try {
-      // First, try to authenticate with the real API
+      // Always use a single admin login for admin@parkez.com
+      if (email === 'admin@parkez.com' && password === 'admin123') {
+        // Create an admin user
+        const adminUser = {
+          _id: 'admin-id',
+          name: 'Admin User',
+          email: 'admin@parkez.com',
+          role: 'admin'
+        };
+
+        // Store token in localStorage
+        localStorage.setItem('token', 'admin-token');
+
+        // Call the onLogin callback with the admin user data
+        onLogin(adminUser);
+        return;
+      }
+
+      // Try to call the real API for non-demo credentials
       try {
         const response = await authAPI.login({ email, password });
 
@@ -34,25 +52,6 @@ const Login = ({ onLogin }) => {
         }
       } catch (apiError) {
         console.error('API Login error:', apiError);
-
-        // If API fails, fall back to demo login for admin@parkez.com
-        if (email === 'admin@parkez.com' && password === 'admin123') {
-          // Create a demo admin user
-          const demoAdminUser = {
-            _id: 'admin-demo-id',
-            name: 'Admin User',
-            email: 'admin@parkez.com',
-            role: 'admin'
-          };
-
-          // Store a demo token in localStorage
-          localStorage.setItem('token', 'demo-admin-token');
-
-          // Call the onLogin callback with the demo user data
-          onLogin(demoAdminUser);
-          return;
-        }
-
         setError('Invalid credentials. Use admin@parkez.com / admin123');
       }
     } catch (err) {

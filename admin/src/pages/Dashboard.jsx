@@ -111,8 +111,8 @@ const Dashboard = () => {
             color="#f39c12"
           />
           <DashboardCard
-            title="Revenue (USD)"
-            value={`$${stats.revenue}`}
+            title="Revenue (INR)"
+            value={`₹${stats.revenue}`}
             icon="attach_money"
             color="#1abc9c"
           />

@@ -168,8 +168,13 @@
   border: 1px solid rgba(198, 40, 40, 0.2);
 }
 
-.view-button {
-  background-color: #2196F3;
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.view-button, .modal-button {
   color: white;
   border: none;
   border-radius: 20px;
@@ -178,6 +183,10 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s;
+}
+
+.view-button {
+  background-color: #2196F3;
   box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
 }
 
@@ -185,6 +194,17 @@
   background-color: #1976D2;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+.modal-button {
+  background-color: #FF9800;
+  box-shadow: 0 2px 4px rgba(255, 152, 0, 0.2);
+}
+
+.modal-button:hover {
+  background-color: #F57C00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
 }
 
 .no-data {

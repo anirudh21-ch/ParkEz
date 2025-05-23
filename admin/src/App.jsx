@@ -9,6 +9,7 @@ import Login from './pages/Login';
 // Admin Components
 import Dashboard from './pages/Dashboard';
 import ZoneRequests from './pages/ZoneRequests';
+import ZoneDetails from './pages/ZoneDetails';
 import Users from './pages/Users';
 import Operators from './pages/Operators';
 import Sidebar from './components/Sidebar';
@@ -87,6 +88,7 @@ function App() {
               <Routes>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/zone-requests" element={<ZoneRequests />} />
+                <Route path="/zone-details/:id" element={<ZoneDetails />} />
                 <Route path="/users" element={<Users />} />
                 <Route path="/operators" element={<Operators />} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
