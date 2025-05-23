@@ -7,6 +7,9 @@
 IP_ADDRESS=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}')
 echo "Current IP address: $IP_ADDRESS"
 
+# Create logs directory if it doesn't exist
+mkdir -p logs
+
 # Function to check if a port is in use
 check_port() {
     lsof -i :$1 > /dev/null 2>&1
@@ -39,7 +42,8 @@ done
 echo "Starting NumberPlate-Detection-Extraction app on port 5001..."
 cd NumberPlate-Detection-Extraction
 python app.py > ../logs/numberplate_app.log 2>&1 &
-echo "NumberPlate-Detection-Extraction app started with PID $!"
+NUMBERPLATE_PID=$!
+echo "NumberPlate-Detection-Extraction app started with PID $NUMBERPLATE_PID"
 cd ..
 
 # Wait for the NumberPlate app to start
@@ -48,7 +52,8 @@ sleep 3
 # Start the OCR adapter (port 5005)
 echo "Starting OCR adapter on port 5005..."
 python ocr_adapter.py > logs/ocr_adapter.log 2>&1 &
-echo "OCR adapter started with PID $!"
+OCR_PID=$!
+echo "OCR adapter started with PID $OCR_PID"
 
 # Wait for the OCR adapter to start
 sleep 3
@@ -57,12 +62,28 @@ sleep 3
 echo "Starting backend server on port 5002..."
 cd backend
 npm start > ../logs/backend.log 2>&1 &
-echo "Backend server started with PID $!"
+BACKEND_PID=$!
+echo "Backend server started with PID $BACKEND_PID"
+cd ..
+
+# Start the admin dashboard (port 3000)
+echo "Starting admin dashboard on port 3000..."
+cd admin
+npm run dev > ../logs/admin.log 2>&1 &
+ADMIN_PID=$!
+echo "Admin dashboard started with PID $ADMIN_PID"
 cd ..
 
 echo "All services started successfully!"
 echo "- NumberPlate-Detection-Extraction: http://$IP_ADDRESS:5001"
 echo "- OCR Adapter: http://$IP_ADDRESS:5005"
 echo "- Backend Server: http://$IP_ADDRESS:5002"
+echo "- Admin Dashboard: http://$IP_ADDRESS:3000"
+echo ""
+echo "Process IDs:"
+echo "- NumberPlate-Detection-Extraction: $NUMBERPLATE_PID"
+echo "- OCR Adapter: $OCR_PID"
+echo "- Backend Server: $BACKEND_PID"
+echo "- Admin Dashboard: $ADMIN_PID"
 echo ""
 echo "To stop all services, run: ./stop_parkez.sh"

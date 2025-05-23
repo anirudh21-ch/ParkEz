@@ -170,7 +170,7 @@ const ZoneRequests = () => {
                     <td>{request.name}</td>
                     <td>{request.operator.name}</td>
                     <td>{request.totalSlots}</td>
-                    <td>${request.hourlyRate.toFixed(2)}</td>
+                    <td>₹{request.hourlyRate.toFixed(2)}</td>
                     <td>
                       <span className={`status-badge ${request.status}`}>
                         {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
@@ -251,7 +251,7 @@ const ZoneRequests = () => {
               </div>
               <div className="detail-row">
                 <span className="detail-label">Hourly Rate:</span>
-                <span className="detail-value">${selectedRequest.hourlyRate.toFixed(2)}</span>
+                <span className="detail-value">₹{selectedRequest.hourlyRate.toFixed(2)}</span>
               </div>
               <div className="detail-row">
                 <span className="detail-label">Status:</span>

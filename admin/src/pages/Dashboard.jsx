@@ -18,19 +18,68 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+
+    // Set up interval to refresh data every 30 seconds
+    const interval = setInterval(fetchDashboardData, 30000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      // Try to fetch real data from API
+      // Always use dynamic data for admin dashboard
       try {
-        const statsData = await dashboardAPI.getStats();
-        setStats(statsData);
+        // Fetch zone data
+        const zonesResponse = await fetch('http://192.168.137.131:5002/api/zones');
+        const zonesData = await zonesResponse.json();
 
-        const activitiesResponse = await activityAPI.getRecentActivity();
-        if (activitiesResponse.data && activitiesResponse.data.length > 0) {
-          setActivities(activitiesResponse.data);
+        // Fetch operators data
+        const operatorsResponse = await fetch('http://192.168.137.131:5002/api/operators');
+        const operatorsData = await operatorsResponse.json();
+
+        // Fetch users data
+        const usersResponse = await fetch('http://192.168.137.131:5002/api/users');
+        const usersData = await usersResponse.json();
+
+        // Fetch tickets data
+        const ticketsResponse = await fetch('http://192.168.137.131:5002/api/tickets');
+        const ticketsData = await ticketsResponse.json();
+
+        // Calculate revenue from tickets
+        const revenue = ticketsData.data
+          ? ticketsData.data.reduce((total, ticket) => {
+              return total + (ticket.amount || 0);
+            }, 0)
+          : 0;
+
+        // Count pending zone requests
+        const pendingRequests = zonesData.data
+          ? zonesData.data.filter(zone => zone.status === 'pending').length
+          : 0;
+
+        // Count active tickets
+        const activeTickets = ticketsData.data
+          ? ticketsData.data.filter(ticket => ticket.status === 'active').length
+          : 0;
+
+        // Set the stats
+        setStats({
+          users: usersData.data ? usersData.data.length : 0,
+          operators: operatorsData.data ? operatorsData.data.length : 0,
+          zones: zonesData.data ? zonesData.data.length : 0,
+          activeTickets,
+          pendingRequests,
+          revenue
+        });
+
+        // Fetch recent activities
+        const activitiesResponse = await fetch('http://192.168.137.131:5002/api/activities');
+        const activitiesData = await activitiesResponse.json();
+
+        if (activitiesData.data && activitiesData.data.length > 0) {
+          setActivities(activitiesData.data);
         } else {
           setActivities([]);
         }

@@ -109,7 +109,7 @@ exports.getTicket = async (req, res) => {
     if (
       ticket.user._id.toString() !== req.user.id &&
       req.user.role !== 'admin' &&
-      (req.user.role === 'operator' && 
+      (req.user.role === 'operator' &&
        ticket.zone.operator.toString() !== req.user.id)
     ) {
       return res.status(401).json({
@@ -287,7 +287,7 @@ exports.checkoutTicket = async (req, res) => {
     await Notification.create({
       user: ticket.user,
       title: 'Parking Checkout',
-      message: `Your vehicle ${ticket.vehicle.vehicleNumber} has been checked out. Amount: $${amount.toFixed(
+      message: `Your vehicle ${ticket.vehicle.vehicleNumber} has been checked out. Amount: ₹${amount.toFixed(
         2
       )}`,
       type: 'payment',

@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, 
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 # MongoDB connection details
-MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://192.168.137.131:27017/")
 MONGODB_DB = os.getenv("MONGODB_DB", "parkez")
 MONGODB_VEHICLES_COLLECTION = os.getenv("MONGODB_VEHICLES_COLLECTION", "vehicles")
 MONGODB_TICKETS_COLLECTION = os.getenv("MONGODB_TICKETS_COLLECTION", "tickets")
@@ -118,22 +118,22 @@ def init_db():
         # Connect to MongoDB
         client = pymongo.MongoClient(MONGODB_URI)
         db = client[MONGODB_DB]
-        
+
         # Create collections if they don't exist
         if MONGODB_VEHICLES_COLLECTION not in db.list_collection_names():
             db.create_collection(MONGODB_VEHICLES_COLLECTION)
-        
+
         if MONGODB_TICKETS_COLLECTION not in db.list_collection_names():
             db.create_collection(MONGODB_TICKETS_COLLECTION)
-        
+
         # Get collection references
         vehicles_collection = db[MONGODB_VEHICLES_COLLECTION]
         tickets_collection = db[MONGODB_TICKETS_COLLECTION]
-        
+
         # Create indexes
         vehicles_collection.create_index([("vehicleNumber", pymongo.ASCENDING)], unique=True)
         tickets_collection.create_index([("vehicleNumber", pymongo.ASCENDING), ("status", pymongo.ASCENDING)])
-        
+
         # Check if collections are empty before inserting sample data
         if vehicles_collection.count_documents({}) == 0:
             # Insert sample vehicles
@@ -141,16 +141,16 @@ def init_db():
             logger.info(f"Inserted {len(SAMPLE_VEHICLES)} sample vehicles")
         else:
             logger.info("Vehicles collection already has data, skipping sample data insertion")
-        
+
         if tickets_collection.count_documents({}) == 0:
             # Insert sample tickets
             tickets_collection.insert_many(SAMPLE_TICKETS)
             logger.info(f"Inserted {len(SAMPLE_TICKETS)} sample tickets")
         else:
             logger.info("Tickets collection already has data, skipping sample data insertion")
-        
+
         logger.info("Database initialization completed successfully")
-        
+
     except Exception as e:
         logger.error(f"Error initializing database: {str(e)}")
         raise

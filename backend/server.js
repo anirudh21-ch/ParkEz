@@ -141,8 +141,8 @@ app.get('/api/auth/verify', (req, res) => {
 const PORT = 5002; // Changed from 5000 to avoid conflicts with Control Center
 
 // Start server
-app.listen(PORT, '192.168.29.5', () => {
+app.listen(PORT, '192.168.31.33', () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Server accessible at http://localhost:${PORT}`);
-  console.log(`For mobile devices, use your computer's IP address: http://192.168.29.5:${PORT}`);
+  console.log(`For mobile devices, use your computer's IP address: http://192.168.31.33:${PORT}`);
 });

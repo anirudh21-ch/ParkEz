@@ -16,8 +16,13 @@ kill_port() {
 }
 
 # Kill processes on the required ports
-for PORT in 5001 5002 5005; do
+for PORT in 5001 5002 5005 3000; do
     kill_port $PORT
 done
 
 echo "All services stopped successfully!"
+echo "You can check the logs in the logs directory:"
+echo "- NumberPlate-Detection-Extraction: logs/numberplate_app.log"
+echo "- OCR Adapter: logs/ocr_adapter.log"
+echo "- Backend Server: logs/backend.log"
+echo "- Admin Dashboard: logs/admin.log"

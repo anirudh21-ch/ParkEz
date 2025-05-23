@@ -4,7 +4,7 @@ import json
 import sys
 import os
 
-def test_ocr_service(image_path, api_url="http://localhost:5006/scan", operation="entry", zone_id=None, slot_number=None):
+def test_ocr_service(image_path, api_url="http://192.168.137.131:5005/scan", operation="entry", zone_id=None, slot_number=None):
     """
     Test the OCR service with a local image file
 
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     image_path = sys.argv[1]
 
     # Get the API URL from the command line arguments or use the default
-    api_url = sys.argv[2] if len(sys.argv) > 2 else "http://localhost:5006/scan"
+    api_url = sys.argv[2] if len(sys.argv) > 2 else "http://192.168.137.131:5005/scan"
 
     # Get the operation type from the command line arguments or use the default
     operation = sys.argv[3] if len(sys.argv) > 3 else "entry"
